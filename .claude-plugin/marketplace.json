@@ -1,0 +1,17 @@
+{
+  "name": "cro-audit-kit-marketplace",
+  "owner": {
+    "name": "Jason Condie",
+    "email": "jdcondie@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "cro-audit-kit",
+      "source": ".",
+      "description": "One slash command (/cro) that routes to the right CRO audit deliverable: PDF, DOCX memo, or markdown teardown. Includes verification protocol, mobile lens, and A/B test handoff.",
+      "version": "1.0.0",
+      "category": "audit",
+      "tags": ["cro", "ecommerce", "audit"]
+    }
+  ]
+}

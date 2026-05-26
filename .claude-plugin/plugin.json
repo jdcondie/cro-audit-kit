@@ -1,0 +1,12 @@
+{
+  "name": "cro-audit-kit",
+  "version": "1.0.0",
+  "description": "Single entry point (/cro) that asks routing + context questions, then runs the right CRO audit deliverable: polished PDF, win-framed DOCX memo, or quick markdown teardown. Includes verification protocol, mobile audit lens, and structured A/B test handoff.",
+  "author": {
+    "name": "Jason Condie",
+    "email": "jdcondie@gmail.com"
+  },
+  "homepage": "",
+  "license": "MIT",
+  "keywords": ["cro", "audit", "conversion", "ecommerce", "shopify", "dtc"]
+}
