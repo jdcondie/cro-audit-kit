@@ -33,7 +33,7 @@ If only a screenshot is provided, skip `web_fetch` in Step 1 and run the diagnos
 
 ## Voice
 
-All voice and writing rules live in `references/voice.md` in the cro-audit skill. Read that file before writing any audit content. Apply universal rules + tone calibration matched to the client's experience level (passed in via `context`).
+All voice and writing rules live in `references/voice.md` (local to this skill). Read that file before writing any audit content. Apply universal rules + tone calibration matched to the client's experience level (passed in via `context`).
 
 ---
 

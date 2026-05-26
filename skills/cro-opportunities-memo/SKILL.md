@@ -330,7 +330,7 @@ A complete working build script is available at the bottom of this skill as a re
 
 ## Step 5 — Writing Rules (Voice and Tone)
 
-All voice rules, banned patterns, banned words, and tone calibration live in `../cro-audit/references/voice.md`. Read that file before writing any memo content. Apply universal rules + tone calibration matched to the mode confirmed in Step 1 (beginner vs intermediate).
+All voice rules, banned patterns, banned words, and tone calibration live in `references/voice.md` (local to this skill). Read that file before writing any memo content. Apply universal rules + tone calibration matched to the mode confirmed in Step 1 (beginner vs intermediate).
 
 ### Memo-specific structural rules (on top of shared voice)
 

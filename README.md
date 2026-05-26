@@ -48,6 +48,22 @@ If you pass a URL alone, the command asks 4 questions before dispatching:
 
 If you pass a deliverable hint (`pdf`, `memo`, `quick`), it skips intake and dispatches immediately.
 
+## Updating across Claude Code, Claude Desktop, and Claude.ai
+
+Filesystem skills + slash commands only work in Claude Code. Claude Desktop and Claude.ai have their own upload-based skills system. To keep all three in sync:
+
+1. **Edit once.** Update `skills/cro-audit/references/voice.md` (the voice file is canonical) or any SKILL.md in the local clone.
+2. **Build the zips.** Run `./build-zips.sh`. Produces three zips in `dist/`, one per skill, each self-contained (voice.md is propagated into the two non-source skills automatically).
+3. **Push to git.** `git add . && git commit -m "..." && git push`.
+4. **Per surface:**
+   - **Claude Code** (each machine): `/plugin update cro-audit-kit`
+   - **Claude Desktop**: Settings → Skills → Upload, drag in the relevant zip from `dist/`
+   - **Claude.ai**: Settings → Capabilities → Skills → Upload, drag in the relevant zip
+
+The `/cro` slash command only runs in Claude Code. In Claude Desktop and Claude.ai, trigger the skill by description: "Run a CRO audit on https://...". The description-matching layer routes to the right skill.
+
+---
+
 ## Customizing
 
 - **Voice rules:** edit `skills/cro-audit/references/voice.md` — all three skills inherit from this single source.
