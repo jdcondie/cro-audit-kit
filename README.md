@@ -13,21 +13,34 @@ All three skills share one voice reference (`skills/cro-audit/references/voice.m
 
 ## Install
 
-Two commands inside Claude Code:
+**Claude Code**, two commands:
 
 ```
 /plugin marketplace add jdcondie/cro-audit-kit
 /plugin install cro-audit-kit
 ```
 
-Replace `jdcondie/cro-audit-kit` with the actual git path once you've pushed this folder to a repo.
+**Claude Cowork (Desktop):** Settings → Customize → + → Add Marketplace, paste
+`https://github.com/jdcondie/cro-audit-kit`, then install `cro-audit-kit`.
 
-For local install without a git repo:
+For a local install without going through GitHub:
 
 ```
 /plugin marketplace add /path/to/cro-audit-kit
 /plugin install cro-audit-kit
 ```
+
+## Going further
+
+This kit is the free tier: 3 skills and the `/cro` command, enough to run a real
+audit end to end.
+
+The paid **CRO Pack** ($97) is the same workflow with 15 skills: PDP teardown,
+mobile friction diagnostic, funnel leak hunt, CVR drop diagnosis, A/B result
+interpretation, test prioritization, competitor conversion teardown, and a
+client-ready opportunities memo. One `/cro` router across all of it.
+
+Details at [jaycondie.com](https://jaycondie.com).
 
 ## Usage
 
