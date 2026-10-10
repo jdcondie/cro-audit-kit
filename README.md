@@ -1,6 +1,6 @@
 # CRO Audit Kit
 
-> **Maintenance note (2026-08-10):** This kit is an export artifact of the live skills at `~/.claude/skills/`. The live `cro-site-audit` and `cro-opportunities-memo` migrated to the house deliverable system (white page, Helvetica/Arial, ink titles, impact ordering + Easy/Medium/Hard effort tags — no severity traffic lights, no DM Sans, no cream). The skill copies in here predate that migration. Regenerate from live before any release; don't hand-edit the copies here.
+> **Maintenance note (2026-08-10):** The skills in this kit are exported from a live skill library. The live `cro-site-audit` and `cro-opportunities-memo` have since moved to a new deliverable look (white page, Helvetica/Arial, ink titles, findings ordered by impact, no severity traffic lights, no DM Sans, no cream). The copies here predate that change. Regenerate them from the live library before any release; don't hand-edit the copies here.
 
 One slash command (`/cro`) that routes any CRO audit request to the right deliverable. Built for ecommerce operators who want a polished client-facing audit, an encouraging follow-up memo, or a quick internal teardown without remembering which skill does which.
 
