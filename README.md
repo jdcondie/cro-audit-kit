@@ -80,7 +80,7 @@ The `/cro` slash command only runs in Claude Code. In Claude Desktop and Claude.
 ## Customizing
 
 - **Voice rules:** edit `skills/cro-audit/references/voice.md` — all three skills inherit from this single source.
-- **Sender / agency identity:** the PDF skill defaults to "Matix Labs" and email sign-offs use "Jason Condie." Search for these strings in `skills/cro-site-audit/SKILL.md` and replace with your own.
+- **Sender / agency identity:** the PDF skill defaults to the placeholder "[YOUR AGENCY]" and email sign-offs use "Jason Condie." Search for these strings in `skills/cro-site-audit/SKILL.md` and replace with your own.
 
 ## Requirements
 
