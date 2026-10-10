@@ -35,10 +35,11 @@ For a local install without going through GitHub:
 This kit is the free tier: 3 skills and the `/cro` command, enough to run a real
 audit end to end.
 
-The paid **CRO Pack** ($97) is the same workflow with 15 skills: PDP teardown,
-mobile friction diagnostic, funnel leak hunt, CVR drop diagnosis, A/B result
-interpretation, test prioritization, competitor conversion teardown, and a
-client-ready opportunities memo. One `/cro` router across all of it.
+The paid **DTC Growth System** ($247) includes this whole workflow plus the
+deep-dive skills it hands off to: PDP teardown, mobile friction, funnel leaks,
+conversion drops, checkout drop-off, A/B result interpretation, test
+prioritization and competitor teardowns. It also covers paid ads, Shopify and
+testing: 50 skills in one install, with `/cro` routing across all of it.
 
 Details at [jaycondie.com](https://jaycondie.com).
 
