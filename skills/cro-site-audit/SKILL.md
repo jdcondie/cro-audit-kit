@@ -23,7 +23,7 @@ Fetch. Diagnose. Triage. Build. One URL in, one polished client deliverable out.
 url: [PASTE URL]                  — OR provide a screenshot path if the site is JS-heavy, login-gated, or otherwise hard to fetch
 screenshot_path: [optional]       — fallback when URL fetch is unreliable
 brand_name: [optional — auto-detected from site if not provided]
-agency_name: [optional — defaults to "Matix Labs"]
+agency_name: [optional — defaults to "[YOUR AGENCY]"]
 context: [optional — from /cro intake: business model, primary goal, prior tests, experience level]
 ```
 
