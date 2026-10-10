@@ -17,13 +17,46 @@ Fetch. Diagnose. Triage. Build. One URL in, one polished client deliverable out.
 
 ---
 
+## STEP 0: LOAD VOICE FIRST
+
+Before producing this deliverable, load `references/voice.md` (CRO voice) and `references/audit-voice.md` (client register). If you keep your own writing voice guide, load it too.
+
+**The voice files are canonical for VOICE. This skill is canonical for DELIVERABLE FORMAT.** They coordinate. Voice rules apply inside the PDF copy — no em dashes, no banned words, no fabricated quotes, no negation flips, no AI tells. The skill's structure (sections, scoring, layout) stays as defined below.
+
+**Route for CRO site audit (client-facing PDF):**
+- Register: punchy / operator mode (peer-to-peer with senior operator audience)
+- Audience: client-facing, advanced operator
+- Apply: Realism Technique skipped (operator teaching, not narrative)
+- Apply: All universal rules from 10 Router
+- Apply: Specific numbers, named brands, real examples (no vague claims)
+- Skip: profanity, casual register, off-duty voice
+
+---
+
+---
+
+## Theme
+
+This skill outputs a **landscape PDF rendered via reportlab (Python)** in the house look. The color and font constants below mirror `references/tokens.js` (`themes.pdf` block plus the shared `ACCENT`/ink/body/muted values) — if a value changes in tokens.js, change it here to match. Do not introduce colors or fonts that aren't in tokens.
+
+What the house look means on this surface:
+- **White page** (`paper`), house oxblood `#8C2F26` accent, ink `#1F2A33` titles, body `#2B3843`, muted `#5F6B75`.
+- **Helvetica** (reportlab's built-in metric twin of the kit's Arial). No CDN font downloads.
+- **Plain-noun finding titles in ink** with the insight as the bolded first sentence of the Current State card (register: `references/audit-voice.md`). No numbered ALL-CAPS titles, no claim headlines.
+- **Impact ordering** instead of severity traffic lights or effort tags (Easy/Medium/Hard labels are dead in client deliverables, your call Aug 2026). The ordering alone carries the priority.
+- **Opportunity-box dark fill** stays `#1F2A33` (the kit's ink) so the white opportunity bullets hold contrast.
+
+Prepared-by defaults to the agency name (`S.brand.agency`, set once in `references/tokens.js`) — client deliverables ship under the agency brand per `references/audit-voice.md` Branding and sign-off.
+
+---
+
 ## Inputs
 
 ```
 url: [PASTE URL]                  — OR provide a screenshot path if the site is JS-heavy, login-gated, or otherwise hard to fetch
 screenshot_path: [optional]       — fallback when URL fetch is unreliable
 brand_name: [optional — auto-detected from site if not provided]
-agency_name: [optional — defaults to "[YOUR AGENCY]"]
+agency_name: [optional — defaults to the agency name (S.brand.agency)]
 context: [optional — from /cro intake: business model, primary goal, prior tests, experience level]
 ```
 
@@ -33,7 +66,7 @@ If only a screenshot is provided, skip `web_fetch` in Step 1 and run the diagnos
 
 ## Voice
 
-All voice and writing rules live in `references/voice.md` (local to this skill). Read that file before writing any audit content. Apply universal rules + tone calibration matched to the client's experience level (passed in via `context`).
+All voice and writing rules live in `references/voice.md` in the cro-audit skill. Read that file before writing any audit content. Apply universal rules + tone calibration matched to the client's experience level (passed in via `context`).
 
 ---
 
@@ -115,21 +148,15 @@ Is there a PDP-specific or intent-matched capture mechanism for undecided visito
 **7. Mobile Experience**
 Most ecom traffic is mobile. Check: is the primary CTA reachable with one thumb? Is there a sticky add-to-cart on PDPs? How long is the mobile homepage scroll vs. desktop? Is the mobile menu logical or buried in a hamburger that hides everything? Does the hero image crop badly on portrait? Are trust elements visible above the mobile fold? Is checkout single-page or multi-step on mobile?
 
-The audit weighs mobile against desktop. If the site is broken on mobile but fine on desktop, that's a CRITICAL finding regardless of how clean the desktop hero looks.
+The audit weighs mobile against desktop. If the site is broken on mobile but fine on desktop, that finding leads the audit regardless of how clean the desktop hero looks.
 
 ---
 
-## Step 2 — Severity Triage (silent)
+## Step 2 — Impact Triage (silent)
 
-Assign each finding one of three severity levels:
+Rank findings by conversion impact — biggest opportunity first. The ordering carries the priority; there is no severity traffic light and no effort tag (see `references/guardrails.md`, no composite scores or severity color systems client-facing). Where the reader needs to know what a fix takes, say it in plain prose inside the finding ("you can do this in settings," "a developer for an hour or two"), never as a label.
 
-| Level | Label | Dot Color | Meaning |
-|---|---|---|---|
-| 1 | CRITICAL | Red `#E53E3E` | Directly blocks purchase or destroys trust |
-| 2 | HIGH | Orange `#DD9B20` | Increases friction or reduces confidence |
-| 3 | MEDIUM | Gold `#D6B82E` | Missed opportunity, lower conversion impact |
-
-Aim for 1 CRITICAL, 3 HIGH, and 2 MEDIUM findings. Adjust if the site genuinely warrants more or fewer at any level.
+Define the tags for the reader once, on the first finding page or the cover. Aim for 5-6 findings: the top 3-4 by impact each get their own page, the lighter 2 share a page. Adjust if the site genuinely warrants more or fewer.
 
 ---
 
@@ -170,58 +197,32 @@ Use `reportlab.platypus` (SimpleDocTemplate, Paragraph, Spacer, Table, TableStyl
 
 ### Fonts
 
-Download DM Sans from the jsdelivr CDN and register with reportlab:
+Use reportlab's built-in Helvetica family (the metric twin of the kit's Arial). No downloads, no registration needed — `<b>` and `<i>` tags inside Paragraphs map automatically for the standard 14 fonts.
 
 ```python
-import os, urllib.request
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase.pdfmetrics import registerFontFamily
-
-FONT_DIR = "/tmp/fonts"
-os.makedirs(FONT_DIR, exist_ok=True)
-
-font_urls = {
-    "DMSans": "https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-400-normal.ttf",
-    "DMSans-Bold": "https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-700-normal.ttf",
-    "DMSans-Medium": "https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-500-normal.ttf",
-    "DMSans-Italic": "https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-400-italic.ttf",
-}
-for name, url in font_urls.items():
-    path = os.path.join(FONT_DIR, f"{name}.ttf")
-    if not os.path.exists(path):
-        urllib.request.urlretrieve(url, path)
-    pdfmetrics.registerFont(TTFont(name, path))
-
-# CRITICAL: register the font family so <b> and <i> tags work inside Paragraphs
-registerFontFamily("DMSans",
-    normal="DMSans",
-    bold="DMSans-Bold",
-    italic="DMSans-Italic",
-    boldItalic="DMSans-Bold",
-)
+BODY   = "Helvetica"
+BODY_B = "Helvetica-Bold"
+BODY_I = "Helvetica-Oblique"
 ```
 
-Fallback to Helvetica/Helvetica-Bold/Helvetica-Oblique if font download fails.
-
 ### Color System
+
+Every value mirrors `references/tokens.js` (`themes.pdf` + shared). Change tokens first, then this block.
 
 ```python
 from reportlab.lib.colors import HexColor, white
 
-BG            = HexColor("#f0efeb")   # page background (cream)
-SLATE         = HexColor("#5f7285")   # titles, heading text
-SLATE_DARK    = HexColor("#4a5d6e")
-TEXT_DARK     = HexColor("#2d3748")   # body text
-TEXT_MED      = HexColor("#4a5568")   # secondary text
-TEXT_LIGHT    = HexColor("#8a9ab0")   # footer text
-BORDER_LIGHT  = HexColor("#d6d3cb")   # dividers, card borders
-CRITICAL_DOT  = HexColor("#E53E3E")
-HIGH_DOT      = HexColor("#DD9B20")
-MEDIUM_DOT    = HexColor("#D6B82E")
-OPP_BG        = HexColor("#5a6978")   # dark opportunity box background
-CARD_BG_LIGHT = HexColor("#f7f6f3")   # priority grid content rows
-NUM_ROW_BG    = HexColor("#edecea")   # priority grid number rows (slightly darker)
+BG            = HexColor("#FFFFFF")   # page background — tokens pdf.paper
+ACCENT        = HexColor("#8C2F26")   # primary brand accent — tokens HOUSE (oxblood)
+INK           = HexColor("#1F2A33")   # titles, labels — tokens pdf.ink
+TEXT_DARK     = HexColor("#2B3843")   # body text — tokens pdf.body
+TEXT_MED      = HexColor("#5F6B75")   # secondary text — tokens pdf.muted
+TEXT_LIGHT    = HexColor("#5F6B75")   # footer text — tokens pdf.muted
+BORDER_LIGHT  = HexColor("#D1DADF")   # dividers, card borders — tokens pdf.rule
+OPP_BG        = INK                   # dark opportunities box — tokens pdf.opportunityBox
+CARD_BG_LIGHT = HexColor("#F5F7F8")   # priority grid content rows — tokens pdf.panel
+NUM_ROW_BG    = HexColor("#E6ECEF")   # priority grid number rows (slightly darker) — tokens pdf.card
+CS_BG         = HexColor("#E6ECEF")   # current-state card fill — tokens pdf.card
 ```
 
 ### Layout
@@ -241,15 +242,16 @@ RIGHT_COL_W = (CONTENT_W - COL_GAP) / 2
 ### Page Background and Footer
 
 Create a `bg_canvas` callback that:
-1. Fills the entire page with the cream background `BG`
-2. Draws a branded accent bar at the very top of the page: full width, 3.5pt tall, `SLATE` color
+1. Fills the entire page with the white background `BG`
+2. Draws a branded accent bar at the very top of the page: full width, 3.5pt tall, `ACCENT` color
 3. Draws a thin divider line (0.5pt, `BORDER_LIGHT`) at y=44
-4. Draws page number right-aligned at y=32, `TEXT_LIGHT` color, 7.5pt body font
+4. Draws the house footer: `<Brand> · Site Audit` left-aligned and page number right-aligned at y=32, `TEXT_LIGHT` color, 7.5pt body font
 
 Track page count with `page_count = [0]` incremented in the callback.
 
 ```python
 page_count = [0]
+footer_label = f"{brand_name} · Site Audit"
 
 def bg_canvas(canvas, doc):
     page_count[0] += 1
@@ -263,84 +265,54 @@ def bg_canvas(canvas, doc):
     canvas.line(MARGIN_LR, footer_y + 12, PAGE_W - MARGIN_LR, footer_y + 12)
 
     # Top accent bar
-    canvas.setFillColor(SLATE)
+    canvas.setFillColor(ACCENT)
     canvas.rect(0, PAGE_H - 3.5, PAGE_W, 3.5, fill=1, stroke=0)
 
     canvas.setFont(BODY, 7.5)
     canvas.setFillColor(TEXT_LIGHT)
+    canvas.drawString(MARGIN_LR, footer_y, footer_label)
     canvas.drawRightString(PAGE_W - MARGIN_LR, footer_y, str(page_count[0]))
 
     canvas.restoreState()
 ```
 
-### BadgeDot Flowable
-
-Severity badges use a custom `BadgeDot` Flowable: a pill-shaped rounded rect (`#e8e6e0`) with a colored dot (4.5r circle) on the left and bold uppercase label text on the right. Width 110, height 24.
-
-```python
-class BadgeDot(Flowable):
-    def __init__(self, label, dot_color, width=110, height=24):
-        Flowable.__init__(self)
-        self.label = label.upper()
-        self.dot_color = dot_color
-        self.width = width
-        self.height = height
-
-    def wrap(self, availWidth, availHeight):
-        return self.width, self.height
-
-    def draw(self):
-        c = self.canv
-        c.saveState()
-        c.setFillColor(HexColor("#e8e6e0"))
-        c.roundRect(0, 0, self.width, self.height, self.height / 2, fill=1, stroke=0)
-        c.setFillColor(self.dot_color)
-        c.circle(16, self.height / 2, 4.5, fill=1, stroke=0)
-        c.setFillColor(TEXT_DARK)
-        c.setFont(BODY_B, 8.5)
-        c.drawString(28, (self.height - 8.5) / 2 + 1, self.label)
-        c.restoreState()
-```
-
 ### Page Structure
 
-**1. Cover Page**
+**1. Cover Page** (plain and professional, matching the house DOCX cover conventions)
 - `Spacer(1, 80)` top padding
-- Prepared by line: bold 11pt, SLATE color, spaceAfter 14
-- Title: `SITE AUDIT: [BRAND NAME]` in bold 48pt, SLATE, leading 54, spaceAfter 16
-- `Spacer(1, 6)`
-- Horizontal rule: `HRFlowable(width="100%", thickness=1.5, color=SLATE, spaceAfter=20)`
-- Italic framing quote: 15pt italic, TEXT_MED, leading 24
+- Kicker: `SITE AUDIT` in bold 11pt, ACCENT, letter-spaced caps, spaceAfter 14
+- Title: `[Brand Name]` in bold 48pt, INK, leading 54, spaceAfter 8
+- Date line: 12pt italic, TEXT_MED, spaceAfter 16
+- Horizontal rule: `HRFlowable(width="100%", thickness=1.5, color=ACCENT, spaceAfter=20)`
+- `PREPARED BY` label in bold 9pt ACCENT caps, then agency/brand name 12pt INK
+- `Spacer(1, 16)`, then the framing quote: 15pt italic, TEXT_MED, leading 24
   > "When a new person lands on your site, we want them to instantly be able to answer four key questions: What do you sell? Who is it for? Why should I care? and What do I do now?"
 - `PageBreak()`
 
-**2. Finding Pages (one per finding, except MEDIUM findings share a page)**
+**2. Finding Pages (one per finding, except the two lightest findings share a page)**
 
 Each finding page uses a `finding_page()` function that returns a list of flowables:
-1. `BadgeDot(level_label, dot_color)`
-2. `Spacer(1, 12)`
-3. Section title with number prefix: `"01   HERO SECTION"` in bold 28pt uppercase, SLATE, leading 34. Use `section_num` parameter formatted as `f"{section_num:02d}"`.
-4. Optional subtitle: italic 21pt, SLATE, leading 28
-5. `Spacer(1, 24)` breathing room before columns
+1. Section title: a plain noun phrase in bold 28pt, INK, leading 34, sentence case ("Hero section", "Navigation", "Trust near the buy button"). No number prefix, no ALL CAPS, no claim headline — the insight belongs in the Current State card's bolded first sentence.
+2. `Spacer(1, 24)` breathing room before columns
 
-6. Two-column Table layout:
-   - **Left column** (50% minus half gap): Light background card (`CS_BG = #e8e6e2`) with a 2.5pt `SLATE` accent line on the left edge. The accent line is a separate thin Table cell placed left of the card. Card has rounded corners `[0, 8, 8, 0]` (flat on left where accent meets it), padding 24pt LR / 22pt TB. "CURRENT STATE:" label at bold 16pt. Body paragraphs 12pt, leading 19, spaceAfter 20. Use `<b>` tags for emphasis.
+3. Two-column Table layout:
+   - **Left column** (50% minus half gap): Light background card (`CS_BG`) with a 2.5pt `ACCENT` accent line on the left edge. The accent line is a separate thin Table cell placed left of the card. Card has rounded corners `[0, 8, 8, 0]` (flat on left where accent meets it), padding 24pt LR / 22pt TB. "CURRENT STATE:" label at bold 16pt INK. Body paragraphs 12pt, leading 19, spaceAfter 20. **The first sentence carries the insight, bolded** via `<b>` tags ("**Your product page shows one price and your cart charges another.** The page shows\u2026").
    - **Right column** (50% minus half gap): Dark box with `OPP_BG` background, 8px rounded corners, 24pt left/right padding, 22pt top/bottom padding. Contains "OPPORTUNITIES:" label (bold 16pt white) and 3 bullet points (12pt white, leading 19, spaceAfter 20, leftIndent 18). Bullets use `\u2022` character.
    - Use a 3-column Table `[LEFT_COL_W, COL_GAP, RIGHT_COL_W]` with an empty middle cell for the gap between columns.
    - **Alignment rule**: Both columns must use identical top padding so "CURRENT STATE:" and "OPPORTUNITIES:" labels start at the same Y position.
 
-Finding order: CRITICAL first, then HIGH, then MEDIUM.
+Finding order: by impact, biggest opportunity first (from Step 2).
 
-CRITICAL and HIGH findings each get their own page with `PageBreak()` after.
+The top 3-4 findings each get their own page with `PageBreak()` after.
 
-MEDIUM findings share a single page. Use `compact=True` in the finding_page() call which applies these reductions: titles shrink to 22pt, badge gap 6pt, pre-column spacer 10pt, body text 11pt/leading 17/spaceAfter 10, opportunity bullets 11pt/leading 17/spaceAfter 10, box padding 20pt LR / 16pt TB. Separate the two MEDIUM findings with `Spacer(1, 16)` and wrap both in a single `KeepTogether` block.
+The two lightest findings share a single page. Use `compact=True` in the finding_page() call which applies these reductions: titles shrink to 22pt, pre-column spacer 10pt, body text 11pt/leading 17/spaceAfter 10, opportunity bullets 11pt/leading 17/spaceAfter 10, box padding 20pt LR / 16pt TB. Separate the two findings with `Spacer(1, 16)` and wrap both in a single `KeepTogether` block.
 
 **3. Prioritized Opportunities Page (final page)**
 
-`PageBreak()` before. Header: "PRIORITIZED OPPORTUNITIES:" in bold 28pt, SLATE, spaceAfter 20.
+`PageBreak()` before. Header: "Prioritized opportunities" in bold 28pt, INK, spaceAfter 20.
 
 A 2x3 grid Table with alternating number/content row pairs:
-- Number rows: centered 18pt SLATE text, `NUM_ROW_BG` background
+- Number rows: centered 18pt ACCENT text, `NUM_ROW_BG` background
 - Content rows: left-aligned bold uppercase 11pt title + 10.5pt description, `CARD_BG_LIGHT` background
 - Each card pair boxed with 0.5pt `BORDER_LIGHT` border
 - 0.5pt horizontal divider between number and content rows
@@ -355,19 +327,21 @@ Row 2: next 3 supporting improvements
 
 | Element | Font | Size | Leading | Color |
 |---|---|---|---|---|
-| Cover prepared line | DMSans-Bold | 11pt | 14 | SLATE |
-| Cover title | DMSans-Bold | 48pt | 54 | SLATE |
-| Cover quote | DMSans-Italic | 15pt | 24 | TEXT_MED |
-| Finding title | DMSans-Bold | 28pt | 34 | SLATE |
-| Finding subtitle | DMSans-Italic | 21pt | 28 | SLATE |
-| Current State label | DMSans-Bold | 16pt | 22 | TEXT_DARK |
-| Current State body | DMSans | 12pt (11pt compact) | 19 (17 compact), spaceAfter 20 (10 compact) | TEXT_DARK |
-| Opportunities label | DMSans-Bold | 16pt | 22 | white |
-| Opportunity bullets | DMSans | 12pt (11pt compact) | 19 (17 compact), spaceAfter 20 (10 compact) | white |
-| Priority grid number | DMSans | 18pt | 22 | SLATE |
-| Priority grid title | DMSans-Bold | 11pt | 15 | SLATE |
-| Priority grid desc | DMSans | 10.5pt | 16 | TEXT_DARK |
-| Footer | DMSans | 7.5pt | — | TEXT_LIGHT |
+| Cover kicker (SITE AUDIT) | Helvetica-Bold | 11pt | 14 | ACCENT |
+| Cover title (brand name) | Helvetica-Bold | 48pt | 54 | INK |
+| Cover date | Helvetica-Oblique | 12pt | 16 | TEXT_MED |
+| Cover PREPARED BY label | Helvetica-Bold | 9pt | 12 | ACCENT |
+| Cover quote | Helvetica-Oblique | 15pt | 24 | TEXT_MED |
+| Effort-tag definition line | Helvetica | 9.5pt | 14 | TEXT_MED |
+| Finding title (plain noun) | Helvetica-Bold | 28pt | 34 | INK |
+| Current State label | Helvetica-Bold | 16pt | 22 | INK |
+| Current State body | Helvetica | 12pt (11pt compact) | 19 (17 compact), spaceAfter 20 (10 compact) | TEXT_DARK |
+| Opportunities label | Helvetica-Bold | 16pt | 22 | white |
+| Opportunity bullets | Helvetica | 12pt (11pt compact) | 19 (17 compact), spaceAfter 20 (10 compact) | white |
+| Priority grid number | Helvetica | 18pt | 22 | ACCENT |
+| Priority grid title | Helvetica-Bold | 11pt | 15 | INK |
+| Priority grid desc | Helvetica | 10.5pt | 16 | TEXT_DARK |
+| Footer | Helvetica | 7.5pt | — | TEXT_LIGHT |
 
 ---
 
@@ -377,9 +351,9 @@ All voice rules, banned patterns, banned words, and tone calibration live in `re
 
 ### Audit-specific structural rules (on top of shared voice)
 
-- **Severity badges first, bold labels second, bullets third.** A reader skimming for 10 seconds finds the 3 biggest problems through these layers.
-- **Current State:** 2-3 short paragraphs, each naming a specific problem with its conversion cost.
-- **Opportunities:** exactly 3 per finding. Each a concrete action with bold example copy. Use `<b>` tags in Paragraph text for emphasis.
+- **Plain titles first, bolded insight sentences second, bullets third.** A reader skimming for 10 seconds finds the 3 biggest opportunities through these layers.
+- **Current State:** 2-3 short paragraphs. The first sentence carries the insight, bolded. Each paragraph names a specific pattern with its conversion cost, mechanism-attributed (the default, the layout, the auction), never the client's judgment.
+- **Opportunities:** exactly 3 per finding. Each a concrete action with bold example copy — supply the actual headline or line, not an instruction to write one. Use `<b>` tags in Paragraph text for emphasis.
 - If a finding can't be understood in under 5 seconds of reading, rewrite it shorter.
 
 ---
@@ -388,7 +362,7 @@ All voice rules, banned patterns, banned words, and tone calibration live in `re
 
 Before saving the PDF, generate a structured A/B test handoff. This appears in chat after the PDF is delivered, not inside the PDF itself.
 
-Pick the 3 highest-leverage findings (typically the CRITICAL + top 2 HIGH). For each, write:
+Pick the 3 highest-leverage findings (the top 3 by impact from Step 2). For each, write:
 
 ```
 TEST 1
@@ -399,14 +373,14 @@ Expected lift: [Range, e.g. "8-15%"]
 Confidence: [High / Medium / Low based on how directly the finding maps to the KPI]
 ```
 
-Three tests max. These hand off to `test-prioritization-matrix` if the user wants to sequence and resource them.
+Three tests max. These hand off to `test-prioritization-matrix` (not included in this kit) if the user wants to sequence and resource them.
 
 ---
 
 ## Step 4 — Output
 
-1. Save the PDF file to `/mnt/user-data/outputs/[brand-name]-site-audit.pdf`
-2. Call `present_files` with the file path
+1. Save the PDF file to `./outputs/[brand-name]-site-audit.pdf`
+2. Share the file path in chat
 3. Follow with one short sentence in chat: the single highest-leverage fix from the audit
 
 ---
@@ -422,8 +396,8 @@ After presenting the PDF, always print **two delivery emails** in the chat: a **
 Before drafting either version, decide:
 
 1. **Recipient name**
-   - If a contact name is provided or known from context, use the first name (e.g. "Hey Cathy,")
-   - If no contact name, use the brand team format (e.g. "Hey Larder & Vine team,")
+   - If a contact name is provided or known from context, use the first name (e.g. "Hey Sam,")
+   - If no contact name, use the brand team format (e.g. "Hey Client G team,")
 
 2. **Warm or cold delivery**
    - **Warm** (just had a call, meeting, intro, or active conversation): open with the connection. Examples: "Great connecting today." / "Great chat earlier." / "Thanks for jumping on yesterday."
@@ -432,7 +406,7 @@ Before drafting either version, decide:
 
 3. **Sign-off**
    - **Warm**: "Best, Jason"
-   - **Cold or first-touch**: "Best, Jason Condie"
+   - **Cold or first-touch**: "Best, [YOUR NAME]"
 
 ---
 
@@ -454,7 +428,7 @@ The main priorities:
 * [Optional Priority 4 if needed]
 The product is strong. The opportunity is making the experience easier to understand and faster to act on.
 Let me know if you have any questions or need anything.
-Best, [Jason or Jason Condie based on warm/cold]
+Best, [Jason or [YOUR NAME] based on warm/cold]
 
 ```
 
@@ -521,13 +495,13 @@ Took a close look at the site and wanted to share a few initial thoughts when fi
 * [Recommendation 3]
 The product is strong. There's an opportunity to make the experience easier to understand and faster to act on.
 Let me know if you have any questions or need anything.
-Best, [Jason or Jason Condie]
+Best, [Jason or [YOUR NAME]]
 
 ```
 
 **Filling it in:**
 
-- **Number 6 findings, ordered by severity** (CRITICAL first, then HIGH, then MEDIUM). Each numbered finding maps directly to one PDF finding.
+- **Number 6 findings, ordered by impact** (biggest opportunity first, same order as the PDF). Each numbered finding maps directly to one PDF finding.
 - **Framing sentences**: One short sentence per finding. State the observation, not the critique. Bad: "BOGO is announced but never made urgent." Good: "A few things working against it." or "It's mentioned at the top of the page but there's no popup, no inline form, no footer newsletter."
 - **Sub-bullets**: Use when listing 3+ parallel items inside a finding (absences, sub-recommendations, or symptoms). 2-item lists can stay inline.
 - **Softening voice on recommendations**: Use one of these patterns to introduce the fix:
@@ -541,14 +515,14 @@ Best, [Jason or Jason Condie]
 
 ---
 
-### Canonical Example (Detailed Version, Larder & Vine)
+### Canonical Example (Detailed Version, Client G)
 
 This is the exact shape and voice to match. Use this as the reference for tone, bullet structure, and softener placement.
 
 
 ```
 
-Hey Cathy,
+Hey Sam,
 Great connecting today.
 Took a close look at the site and wanted to share a few initial thoughts when first landing on the homepage:
 
@@ -586,11 +560,11 @@ Add a sitewide promo bar with real savings and a real end date.
 * Footer form with a recipe hook
 * 3-question cookware quiz
 
-1. The homepage: 11+ sections with three different "Why Larder & Vine" panels saying overlapping things. My lean:
+1. The homepage: 11+ sections with three different "Why Client G" panels saying overlapping things. My lean:
 
 * Cut to six sections
 * Consolidate the why-us copy into one 4-pillar strip
-* Move Cathrineholm and Chef Series to dedicated pages
+* Move the two heritage product lines to dedicated pages
 The product is strong. There's an opportunity to make the experience easier to understand and faster to act on.
 Let me know if you have any questions or need anything.
 Best, Jason
@@ -601,7 +575,7 @@ Best, Jason
 
 ### Voice Rules for Both Versions
 
-- Match Jay's voice: warm, direct, professional-casual.
+- Match your voice: warm, direct, professional-casual.
 - Recommendations soften with "I'd suggest" / "My lean is" / "Two moves" / "Three adds" / "A few things working against it." Not every recommendation needs a softener, but the overall feel should be peer-to-peer, not directive.
 - Use sub-bullets when listing 3+ parallel items inside a finding.
 - Never write critique-as-headline (e.g. "BOGO is announced but never made urgent"). State the observation conversationally, then bullet the specifics.
@@ -632,23 +606,32 @@ Before saving the file, verify:
 - [ ] No finding claims inventory or stock state without browser confirmation
 - [ ] No finding references a specific promo code without browser confirmation
 - [ ] No finding describes popup behavior without browser confirmation
+- [ ] **Tier D:** every claim with a trigger, delay, sequence or frequency in it carries a measured number, not a screenshot (see `references/core.md`). Tool-call order is not a clock
+- [ ] **Tier D:** stateful widgets (Klaviyo, Privy, Justuno, A/B frameworks) were checked with suppression state cleared, and any self-suppressing widget is named as such in the deliverable so the client isn't confused when they can't reproduce it
+- [ ] Evidence-to-claim pass run: each finding's artifact matches the kind of assertion its sentence makes
+- [ ] **Tier E:** every claim about what a visitor sees on the first screen was judged from a screenshot, not a text extraction
+- [ ] **Tier E:** no negative claim (no / none / nothing / not a single) rests on a DOM or text read alone
+- [ ] **Tier E:** heroes that are video or full-bleed image were checked for copy baked into the media, and the finding says whether that copy is theme-editable or needs the file re-rendered
+- [ ] Fold claims name the viewport and were measured at a laptop and a large monitor
 - [ ] No finding describes dynamic upsell module contents without browser confirmation
 - [ ] Each finding has been internally classified Tier A, B, or C
 - [ ] All Tier B findings have been spot-verified by the user or via Chrome MCP
 - [ ] All Tier C findings have been browser-verified or dropped
-- [ ] Landscape orientation, letter size
-- [ ] Cover page includes brand name, agency name, date, and framing statement
-- [ ] Each finding has a section number (01-06), BadgeDot severity badge, Current State card with accent line, and Opportunity box with exactly 3 bullets
-- [ ] Findings are ordered CRITICAL, HIGH, MEDIUM
-- [ ] MEDIUM findings share a page when they fit
+- [ ] Landscape orientation, letter size, white page (no cream)
+- [ ] Fonts are Helvetica family only — no CDN downloads
+- [ ] Cover page includes the SITE AUDIT kicker, brand name in ink, date, PREPARED BY block, and framing statement
+- [ ] Each finding has a plain-noun title in ink (no number prefix, no ALL CAPS, no claim headline, no effort badge), a Current State card whose first sentence is the bolded insight, and an Opportunity box with exactly 3 bullets
+- [ ] Findings are ordered by impact, biggest opportunity first
+- [ ] The two lightest findings share a page when they fit
 - [ ] Final page has a 6-card prioritized grid (2 rows of 3)
-- [ ] Branded accent bar at top of every page (full width, 3.5pt, SLATE)
-- [ ] Footer on every page: page number right-aligned, thin divider above
+- [ ] Branded accent bar at top of every page (full width, 3.5pt, ACCENT)
+- [ ] Footer on every page: `Brand · Site Audit` left, page number right, thin divider above
+- [ ] All colors match `references/tokens.js` (accent 8C2F26, ink 1F2A33, body 2B3843, muted 5F6B75, rule D1DADF, fills E6ECEF/F5F7F8) — no severity reds/golds, no orange, no cream
 - [ ] All copy is site-specific, not generic
 - [ ] No finding uses "consider," "might," "could potentially," "it depends," "furthermore," or "additionally"
 - [ ] No staccato "No X. No Y. No Z." triples anywhere in the copy. Triple-absences must be written as one flowing sentence.
 - [ ] **Both delivery emails** are printed in chat after the PDF: Short Version and Detailed Version, each in its own code block, each labeled with a header
-- [ ] Context check ran: recipient name resolved (first name or "Brand team"), warm/cold opener chosen, sign-off matches (Jason for warm, Jason Condie for cold)
+- [ ] Context check ran: recipient name resolved (first name or "Brand team"), warm/cold opener chosen, sign-off matches (Jason for warm, [YOUR NAME] for cold)
 - [ ] Detailed Version uses numbered findings (1-6) with sub-bullets when listing 3+ parallel items
 - [ ] Detailed Version uses softening voice on recommendations ("I'd suggest" / "My lean is" / "Two moves" / "Three adds" / "A few things working against it")
 - [ ] Closing lines are preserved exactly: "The product is strong. There's an opportunity to make the experience easier to understand and faster to act on." and "Let me know if you have any questions or need anything."

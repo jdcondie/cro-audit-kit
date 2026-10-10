@@ -68,4 +68,11 @@ Then invoke the chosen skill via the Skill tool. Pass along:
 - Primary goal (CVR / AOV / mobile / checkout / first-purchase / booked calls / trial conversion / etc.)
 - Prior tests / what's already shipped
 
-Follow the downstream skill's instructions exactly. Do not duplicate its diagnostic work here. All three downstream skills read voice rules from `cro-audit/references/voice.md` — they do not need to be re-explained.
+Follow the downstream skill's instructions exactly. Do not duplicate its diagnostic work here. All three downstream skills read voice rules from `references/voice.md` — they do not need to be re-explained.
+
+## Shared core + kit
+
+Before dispatching, load `${CLAUDE_PLUGIN_ROOT}/skills/cro-audit/references/core.md`. It carries the CRO diagnosis stance, the standard findings, the shared guardrails (`skills/cro-audit/references/guardrails.md`), and the **deep-dive handoff table** (5-second-cro (not included in this kit), pdp-teardown (not included in this kit), mobile-friction-diagnostic (not included in this kit), checkout-dropoff-analysis (not included in this kit), funnel-leak-detection (not included in this kit), heatmap-pattern-decoder (not included in this kit), session-recording-analyzer (not included in this kit), pricing-psychology-scanner (not included in this kit), urgency-scarcity-audit (not included in this kit), competitor-conversion-teardown (not included in this kit), and more). On a deep audit, or when the user wants more on one area, hand that section to its specialist instead of going deeper inline.
+
+
+**Length:** if the user hasn't said, ask tight (the highest-leverage findings only) vs full (every section + the relevant deep-dives). Default tight for a quick check, full for a client deliverable.

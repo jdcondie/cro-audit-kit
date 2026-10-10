@@ -21,6 +21,41 @@ This is NOT a teardown. It's a strategic friend pointing at wins waiting to happ
 
 ---
 
+## STEP 0: LOAD VOICE FIRST
+
+Before producing this deliverable, load `references/voice.md` (CRO voice) and `references/audit-voice.md` (client register). If you keep your own writing voice guide, load it too.
+
+**The voice files are canonical for VOICE. This skill is canonical for DELIVERABLE FORMAT.** They coordinate. Voice rules apply inside the DOCX copy — no em dashes, no banned words, no fabricated quotes, no negation flips, no AI tells. The skill's structure stays as defined below.
+
+**Route for opportunities memo (encouraging client memo for beginner/intermediate audience):**
+- Register: warmer than CRO audit, still operator mode (peer who's optimistic + has done the work)
+- Audience: client-facing, beginner-to-intermediate operator (encouraging tone)
+- Apply: Specific numbers, named examples, real outcomes — every claim concrete
+- Apply: All universal rules from 10 Router
+- Skip: profanity, harsh language, problem-framing (this is wins-framed by design)
+- Skip: Realism Technique (this is strategic memo, not narrative)
+
+---
+
+---
+
+## Theme
+
+This skill outputs in the **client** theme (sub-brand `jcm`, density `airy`).
+
+The kit lives in this skill's `references/` folder (`client-theme.js` + `tokens.js`; run `npm install docx` once). Require the theme directly from there: `const { createClientTheme } = require("<this skill folder>/references/client-theme");` then `const C = createClientTheme({ subBrand: 'jcm', density: 'airy' });`. Use its builders (`coverStacked`, `kicker`, `h1`, `h2`, `body`, `bullet`, `dataTable`, `cardTable`, `finding`, `soWhat`, `sectionRule`, `pageBreak`). Do not hardcode fonts, colors, margins, or metric formats. They live in `references/tokens.js`.
+
+**Mapping the memo's bespoke elements to kit builders:**
+- Cover → `coverStacked({ kicker: "<Month YYYY>", title: "<plain deliverable name>", subtitle: "<Brand>", preparedBy: C.ctx.S.brand.agency })`. Title the document by what it is (Landing Page Audit, Meta Ads Audit), brand as subtitle, prepared by the agency.
+- "WHAT TO CHANGE" calloutBox → `finding("What to change", text)`. Same accent left-bar + tint fill.
+- Decisive move → stated once, in prose, inside the section that owns it (usually the first). No closing callout restating it; see "Say it once" in `references/audit-voice.md`.
+- Per-finding section → `h1("<plain subject noun>")` followed by a `body()` whose first sentence is the bolded insight. No `kicker()` label, no `Win N` numbering, no difficulty tag in the header.
+- Closing section → `h1("What we'd recommend")` + `bullet()` list with bolded imperative lead-ins.
+- `codeBox`, `quoteBox`, `divider`, `coverBar` from the old build script are deprecated. Codeboxes (exact suggested copy in beginner mode) render as `body({ bold: true })` lines inside the win, or as a `cardTable` row pair. Quoteboxes render as `body({ italics: true })` with a leading kicker. Dividers render as `sectionRule()`.
+- Sign-off is the agency invitation line only, plain `body()`: "Questions on any of it, shoot us a message. Happy to jump on a call and go through it together." No "Talk soon," no name.
+
+---
+
 ## When to Use This Skill vs. cro-site-audit
 
 | Situation | Skill to use |
@@ -99,7 +134,7 @@ If a finding wants to include any Tier C content, drop the finding or escalate t
 - Signal: founder runs Shopify themselves, no agency history, can't quote CVR off the top, doesn't know terms like AOV / PDP / CVR
 - Framing: gentle, encouraging, explanatory
 - Vocabulary: decoded inline on first use with a parenthetical or short definition
-- Structure: numbered wins, ownership tags (Easy/Medium/Hard), one decisive move at the end
+- Structure: numbered wins, plain-prose effort framing (no Easy/Medium/Hard labels), one decisive move at the end
 - Length: longer, more context, more examples
 - Voice: warm, patient, acknowledges what's working before showing gaps
 
@@ -154,7 +189,7 @@ This is the core of the deliverable. Five wins, ranked by impact on conversion r
 ### Ranking Rules
 - The #1 win is always the single highest-leverage change. The thing that, if they only did one thing, would move the needle most.
 - The #5 win is usually the slowest-compounding or most technical (e.g., email capture, SMS setup).
-- Ownership tags: Easy / Medium / Hard. One tag per win. Don't chain them (no "Easy → Hard").
+- Effort in plain prose per win ("you can do this in settings," "a designer for an hour or two"). No Easy/Medium/Hard labels (dead in client deliverables, Jay Aug 2026).
 - If a win has a developer-required sub-fix, break it into two wins or note it as a "bonus" inside the win.
 
 ### The 5-Win Framework (use as a starting template, not a straitjacket)
@@ -207,130 +242,139 @@ Expected lift: [Range]
 Confidence: [High / Medium / Low]
 ```
 
-These print in chat after the DOCX is delivered. They hand off to `test-prioritization-matrix` if the user wants to sequence them.
+These print in chat after the DOCX is delivered. They hand off to `test-prioritization-matrix` (not included in this kit) if the user wants to sequence them.
 
 ---
 
 ## Step 4 — Build the DOCX
 
-Use the `docx` npm package. Install if needed: `npm install docx`
+The kit owns layout. The skill owns words. Do not redescribe colors, fonts, or spacing here. They live in `tokens.js` and resolve through `client-theme.js` per the Theme block above.
 
-Save to `/mnt/user-data/outputs/[brand-slug]-opportunities.docx`.
-
-### Design System
-
-**Colors**
-```javascript
-const NAVY = "1A2B4A";       // primary, headings, brand voice
-const ORANGE = "E8541A";     // single accent color, callout bars, tag labels
-const GREY = "555555";       // secondary body text
-const LIGHT_GREY = "888888"; // meta labels, captions
-const BG_TINT = "F4F1EC";    // callout box background
-```
-
-One accent color only. No rainbow palettes. Navy + orange + cream is the whole system.
-
-**Typography**
-- Body font: Calibri (universal, renders cleanly everywhere)
-- Body size: 22 half-points (11pt)
-- H1: 40 half-points (20pt), bold, Navy
-- H2: 30 half-points (15pt), bold, Navy
-- H3: 24 half-points (12pt), bold, Navy
-- Tag labels: 18 half-points (9pt), bold, Orange, ALL CAPS, letter-spaced
-- Line height: 320 twips (1.6x) for body
-
-**Layout**
-- Letter size (12240 x 15840 DXA)
-- 0.75" top/bottom margins, 1" left/right margins
-- All tables 9360 DXA wide (content width)
+Save to `./outputs/[brand-slug]-opportunities.docx`.
 
 ### Required Document Structure
 
 Follow this exact structure. The skill has been validated to produce clean, client-ready output when this structure is followed. Do not improvise section order.
 
-**1. Cover Bar (navy block with orange bottom border)**
-- Label: "OPPORTUNITIES MEMO" in letter-spaced caps, cream color
-- Title: Brand name in 56-half-point bold white
-- Tagline: One-line italic summary in cream
-- Bottom border: 36-thick orange line
+**1. Cover** → `coverStacked({ kicker: "<Month YYYY>", title: "<plain deliverable name>", subtitle: "<Brand>", preparedBy: C.ctx.S.brand.agency })`. Title the document by what it is (Landing Page Audit, Opportunities Memo); prepared by the agency, never the personal default. **No `preparedFor`.** The memo goes to one person who already knows it's for them, and naming them on the cover reads like a certificate (Jay, Aug 2026, Client C).
 
-**2. Meta Line**
-- Left: "PREPARED FOR  [Client Name]"
-- Right: "FROM  Jay Condie  ·  [Month Year]"
-
-**3. Opening Paragraph**
-- Greets the client by name in bold navy ("Greg,")
+**2. Opening paragraph**
+- No greeting line. Open straight into the first paragraph (agency register, per `references/audit-voice.md` Branding and sign-off)
 - 3-4 sentences: what you saw, what's working, where the gap is
-- In beginner mode: add a "Quick translation up top" bullet list decoding acronyms used later in the doc (Hero, Above the fold, CTA, PDP, CVR)
-- In intermediate mode: skip the translation list
+- Beginner mode: add a "Quick translation up top" `bullet()` list decoding acronyms used later (Hero, Above the fold, CTA, PDP, CVR)
+- Intermediate mode: skip the translation list
 
-**4. Divider (orange rule)**
+**3. Section rule** → `sectionRule()`
 
-**5. "The big idea" (H1)**
-- One bolded headline insight in 24-half-point navy
-- 2-3 supporting paragraphs
-- Sets up the single highest-leverage observation
+> **Header rule for everything below.** Every `h1()` in this document is a plain noun phrase naming its subject: `Pricing`, `Mobile`, `Product pages`, `Popups and offers`, `Proof and guarantee`, `What we'd recommend`. Never a metaphor, a slogan, a `Win N` label, or an insight sentence. The insight is the section's **first sentence, bolded** via the `**...**` markup `body()` already supports. See "Section headers" in `references/audit-voice.md`. If two sections want the same header, they're one section. Merge them.
 
-**6. "The [N] wins, in order" (H1)**
-- Introductory line explaining ownership tags
-- Bullet list defining Easy / Medium / Hard
-- Numbered list of the 5 wins with their tags
+**4. Summary**
+- `h1("Summary")`
+- 2-3 `body()` paragraphs: what you saw, what's working, where the gap is
+- **No `kpiRow()`.** Dead in memos (Jay, Aug 2026, Client C). A memo's Summary argues in prose; a stat strip padded with whatever numbers were available reads as filler. Numbers belong inside the finding that earns them, or in a `dataTable()` that carries an argument. KPI rows stay alive in account audits, where spend and return are the subject.
+- A `bullet()` list naming each section that follows, one line each, with the subject bolded (`"**Pricing.** The page and the cart disagree."`)
+- `callout()` framing the effort involved
 
-**7. Each Win (H2)**
-- Tag label above H2 (e.g., "WIN 1  ·  EASY  ·  SHIP THIS WEEK" — but in intermediate mode, drop the timing)
-- Actually, update: **never include timing commitments**. Use "WIN 1  ·  EASY" only. Timing creates implicit promises you can't control.
-- Current-state paragraph: 2-3 sentences describing what's on the page
-- Callout box: "WHAT TO CHANGE" with the directive action
-- H3 subsections as needed, each with specific tactical bullets
-- In beginner mode: include a codeBox showing the exact suggested copy (headline, subhead, button text)
-- In intermediate mode: skip the codeBox, just name the principle
+**5. Each finding section**
+- `h1("<plain subject noun>")`
+- Opening `body()` whose **first sentence is the insight, bolded**
+- Supporting `body()` paragraphs, 2-3 sentences each
+- `finding("What to change", "<directive action>")`
+- `h2()` + `bullet()` blocks as needed for sub-steps
+- `soWhat()` to close the section when there's a consequence worth naming
+- Beginner mode: exact suggested copy as a one-column `cardTable`
+- Intermediate mode: skip example copy, just name the principle
 
-**8. "A Short Recap" (H1)**
-- Tag label: "SHIP EARLY"
-- Bullets: the Easy wins
-- Tag label: "SHIP AFTER"
-- Bullets: the Medium and Hard wins
-- Do NOT use calendar language like "This week" / "Next week"
+Order sections by impact, highest first. Difficulty is described in plain prose in the Summary (no Easy/Medium/Hard labels), never used as a header or a kicker label, and never with calendar language ("This week," "Next week").
 
-**9. Decisive Move Callout**
-- Labeled "THE DECISIVE MOVE"
-- One-paragraph distillation of the #1 highest-leverage change
+**6. "What we'd recommend"**
+- `h1("What we'd recommend")`
+- `bullet()` list, one per section, each opening with a bolded imperative (`"**Switch the price default to one-time.** One setting in your bundle app..."`)
+- Ordered the way you'd actually do them
 
-**10. Sign-off**
-- "Questions on any of this? Text me anytime. Happy to jump on a call..."
-- "Talk soon,"
-- "Jay" in bold navy
+**7. Sign-off**
+- Closing `body()` reassurance paragraph (what this all adds up to, effort framing)
+- `body("Questions on any of it, shoot us a message. Happy to jump on a call and go through it together.")`
+- Nothing after that. No "Talk soon," no name. The decisive move was already stated once in its own section and is not restated here.
 
-### Visual Elements
+### Build script
 
-**calloutBox(label, body)** — Cream background, orange left border (24-thick), label in orange caps. Used for "WHAT TO CHANGE" and "THE DECISIVE MOVE."
+```js
+// build-memo.js
+const fs = require("fs");
+const path = require("path");
+const { Packer } = require("docx");
+const { createClientTheme } = require("./client-theme");
 
-**codeBox(label, lines, accent)** — Off-white background, light grey borders, orange left border. Used to show exact suggested copy for headlines, buttons, guarantees. Beginner mode only.
+const C = createClientTheme({ subBrand: "jcm", density: "airy" });
 
-**quoteBox(text)** — Off-white background, orange left border, italic navy text. Used for a single pull-quote line like a guarantee or cause ribbon.
+const children = [
+  ...C.coverStacked({
+    kicker: "<Month YYYY>",
+    title: "<Deliverable name, plain: Landing Page Audit / Meta Ads Audit>",
+    subtitle: "<Brand>",
+    preparedBy: C.ctx.S.brand.agency, // the agency name
+  }),
+  C.pageBreak(),
 
-**divider()** — Orange horizontal rule between major sections.
+  C.h1("Summary"),
+  C.body("<what you saw, on a phone, cold>"),
+  C.body("**<what's already working>** <supporting detail>"),
+  C.body("<where the gap is>"),
 
-**tag(text, color)** — Small letter-spaced all-caps label. Used above H2s to mark difficulty.
+  C.body("This audit covers <N> places where there's room to get more out of the same spend:"),
+  C.bullet("**<Section 1 subject>.** <one-line summary>"),
+  C.bullet("**<Section 2 subject>.** <one-line summary>"),
+  C.callout("<who can do what, effort framing, no calendar language>"),
 
-### Build Order (avoid docx-js pitfalls)
+  C.sectionRule(),
 
-1. Define the color constants
-2. Build helper functions (p, runs, h1, h2, h3, tag, bullet, bulletBold, numbered, divider, calloutBox, codeBox, quoteBox, coverBar, metaLine)
-3. Configure numbering references: "bullets" (orange •), "numbers" (navy bold)
-4. Set page size explicitly: 12240 x 15840 (Letter)
-5. Assemble children array in document order
-6. Validate with `python3 /mnt/skills/public/docx/scripts/office/validate.py`
+  // Each finding section. Header = plain subject noun. Insight = bolded first sentence.
+  C.h1("Pricing"),
+  C.body("**<the insight, as a full sentence>** <the rest of the setup>"),
+  C.body("<supporting paragraph>"),
+  C.finding("What to change", "<directive action>"),
+  // Beginner mode: exact suggested copy as a one-column cardTable
+  // C.cardTable({ headers: ["On the product page"], widths: [C.CW], rows: [["<exact copy>"]] }),
+  C.soWhat("<the consequence worth naming>"),
 
-### Reference Build Script
+  C.sectionRule(),
 
-A complete working build script is available at the bottom of this skill as a reference (see "Appendix: Reference Build Script"). Start from that and modify content, not structure.
+  // Remaining sections repeat the same shape, ordered by impact.
+
+  C.h1("What we'd recommend"),
+  C.body("In the order I'd do them."),
+  C.bullet("**<Imperative for section 1>.** <why, one line>"),
+  C.bullet("**<Imperative for section 2>.** <why, one line>"),
+  C.body("<closing reassurance: what this adds up to, effort framing>"),
+  C.body("Questions on any of it, shoot us a message. Happy to jump on a call and go through it together."),
+];
+
+const doc = C.build({ children, label: "<Deliverable name>  ·  <Brand>" });
+
+Packer.toBuffer(doc).then((buf) => {
+  const out = path.join(__dirname, "<brand-slug>-opportunities.docx");
+  fs.writeFileSync(out, buf);
+  console.log("wrote", out, buf.length, "bytes");
+});
+```
+
+### Notes on usage
+
+- **`finding(label, text)`** is the "WHAT TO CHANGE" and "THE BIGGEST, SIMPLEST MOVE" treatment. Same accent left-bar + tint fill as the old calloutBox. It is also how the decisive move gets carried, so it never needs its own section header.
+- **`body()` supports `**inline bold**`** via `mkRuns`. That's the mechanism for the bolded insight sentence that opens every section. Use it rather than a separate bold paragraph.
+- **Pin table rows** before saving so copy blocks don't tear across a page break in Word: inject `<w:cantSplit/>` into every `<w:trPr>` in `word/document.xml` after `Packer.toBuffer`.
+- **`sectionRule()`** replaces the old orange `divider()`.
+- The old `codeBox` (beginner mode exact-copy examples) is rendered as bolded `body()` lines or, for multi-line examples, a single-column `cardTable`.
+- The old `quoteBox` (cause ribbon / guarantee text) renders as `body(text, { italics: true })` with a leading `kicker()`.
+- **Metric formatting** comes from `tokens.metrics`. Format numbers before passing them in.
+- **Footer label** = `<Brand>  ·  Opportunities Memo`.
 
 ---
 
 ## Step 5 — Writing Rules (Voice and Tone)
 
-All voice rules, banned patterns, banned words, and tone calibration live in `references/voice.md` (local to this skill). Read that file before writing any memo content. Apply universal rules + tone calibration matched to the mode confirmed in Step 1 (beginner vs intermediate).
+All voice rules, banned patterns, banned words, and tone calibration live in `references/voice.md`. Read that file before writing any memo content. Apply universal rules + tone calibration matched to the mode confirmed in Step 1 (beginner vs intermediate).
 
 ### Memo-specific structural rules (on top of shared voice)
 
@@ -342,9 +386,9 @@ All voice rules, banned patterns, banned words, and tone calibration live in `re
 
 ## Step 6 — Output and Deliver
 
-1. Save DOCX to `/mnt/user-data/outputs/[brand-slug]-opportunities.docx`
-2. Validate: `python3 /mnt/skills/public/docx/scripts/office/validate.py [filepath]`
-3. Call `present_files` with the filepath
+1. Save DOCX to `./outputs/[brand-slug]-opportunities.docx`
+2. Validate: `python3 ~/.claude/skills/docx/scripts/office/validate.py [filepath]` (optional, needs Anthropic's docx skill)``
+3. Share the file path in chat
 4. Write a 2-3 sentence summary in chat that names the decisive move. No long preamble, no full recap.
 5. Offer the delivery email: "Want a short email to send when you deliver this?" Do not produce the email unless asked.
 
@@ -357,31 +401,44 @@ Before saving, verify:
 - [ ] No finding claims inventory or stock state without browser confirmation
 - [ ] No finding references a specific promo code without browser confirmation
 - [ ] No finding describes popup behavior without browser confirmation
+- [ ] **Tier D:** every claim with a trigger, delay, sequence or frequency in it carries a measured number, not a screenshot (see `references/core.md`). Tool-call order is not a clock
+- [ ] **Tier D:** stateful widgets (Klaviyo, Privy, Justuno, A/B frameworks) were checked with suppression state cleared, and any self-suppressing widget is named as such in the deliverable so the client isn't confused when they can't reproduce it
+- [ ] Evidence-to-claim pass run: each finding's artifact matches the kind of assertion its sentence makes
+- [ ] **Tier E:** every claim about what a visitor sees on the first screen was judged from a screenshot, not a text extraction
+- [ ] **Tier E:** no negative claim (no / none / nothing / not a single) rests on a DOM or text read alone
+- [ ] **Tier E:** heroes that are video or full-bleed image were checked for copy baked into the media, and the finding says whether that copy is theme-editable or needs the file re-rendered
+- [ ] Fold claims name the viewport and were measured at a laptop and a large monitor
 - [ ] No finding describes dynamic upsell module contents without browser confirmation
 - [ ] Each finding has been internally classified Tier A, B, or C
 - [ ] All Tier B findings have been spot-verified by the user or via Chrome MCP
 - [ ] All Tier C findings have been browser-verified or dropped
 - [ ] Mode was confirmed at the start of the run
-- [ ] Cover bar is navy with orange bottom border
-- [ ] Meta line shows "PREPARED FOR" and "FROM  Jay Condie  ·  [Month Year]"
-- [ ] Opening paragraph greets client by name in bold navy
+- [ ] Cover built via `C.coverStacked(...)` per the Theme block, not a custom bar
+- [ ] `preparedBy` set to `S.brand.agency` (the agency name), never left to the personal default
+- [ ] No `preparedFor` on the cover, and no `kpiRow()` anywhere in the memo
+- [ ] No greeting line, no "Hey," — the doc opens straight into the first paragraph
 - [ ] Beginner mode includes acronym translation bullets; intermediate mode does not
-- [ ] "The big idea" section has one bolded headline insight
-- [ ] Exactly 5 wins, ranked by impact
-- [ ] Each win has ONE ownership tag (Easy / Medium / Hard), no chained tags
+- [ ] **Every `h1()` is a plain noun phrase naming its subject.** Read the headers alone, top to bottom: they should work as a table of contents. Any metaphor, slogan, `Win N` label, or full-sentence insight is a fail, rewrite it
+- [ ] **Every section opens with its insight as a bolded first sentence** using `**...**` markup
+- [ ] No two sections share a subject. If they would, they were merged
+- [ ] Sections ranked by impact, highest first
+- [ ] Difficulty appears in plain prose only, with no Easy/Medium/Hard labels, never in a header or kicker
 - [ ] No calendar language anywhere ("this week," "next week" are banned)
-- [ ] Each win has a "WHAT TO CHANGE" calloutBox
-- [ ] Beginner mode: each win includes a codeBox with exact suggested copy
-- [ ] Intermediate mode: codeBoxes are only used when showing a literal pull-quote (guarantee text, cause ribbon)
-- [ ] "A Short Recap" uses SHIP EARLY / SHIP AFTER tags, not calendar dates
-- [ ] "THE DECISIVE MOVE" callout at the end names ONE action
-- [ ] Sign-off is "Talk soon, Jay" (in bold navy for the name)
+- [ ] Each section has a `C.finding("What to change", ...)` block
+- [ ] Beginner mode: example copy rendered as a one-column `cardTable`
+- [ ] Intermediate mode: example-copy blocks reserved for literal pull-quotes (guarantee text, cause ribbon)
+- [ ] Closing section is `h1("What we'd recommend")` with bolded imperative lead-ins
+- [ ] The decisive move is stated exactly once, in its own section; no closing callout or "this is the one that matters most" restating it
+- [ ] Sign-off is the agency invitation line only ("shoot us a message"); no "Talk soon," no name
+- [ ] Verdict words softened ("Needs work," not "Nothing"); deficits framed as goals; outcome claims hedged ("could be")
+- [ ] No internal notes in the doc (verification receipts, attribution caveats, pre-publish checks); those go in the chat handoff
+- [ ] Recap bullets are plain imperatives with no justification clauses
 - [ ] No em dashes anywhere
 - [ ] No banned words from the global list
 - [ ] No staccato "No X. No Y. No Z." triples
 - [ ] Every piece of advice is site-specific, not generic
 - [ ] DOCX validates cleanly
-- [ ] File saved to /mnt/user-data/outputs/ with a brand-slug filename
+- [ ] File saved to ./outputs/ with a brand-slug filename
 
 ---
 
@@ -402,315 +459,20 @@ The short version: [one-line diagnosis of the real gap]. [One-line framing of th
 Have a read when you get a minute. Happy to jump on a quick call to walk through it whenever works.
 
 Talk soon,
-Jay
+[YOUR FIRST NAME]
 ```
 
 Voice rules for the email:
-- Match Jay's voice from jay-email-voice-guide.md
-- Sign off as "Jay" (not "Jason Condie") — this is a warmer follow-up context
+- Match your own email voice
+- Sign off with your first name only — this is a warmer follow-up context
 - Keep it to 3-4 sentences in the body
 - No em dashes
 - One subject line option only, not multiple variants
 
 ---
 
-## Appendix: Reference Build Script
-
-The following script produced the Downright Delicious opportunities memo and serves as the validated reference implementation. Start from this when building any new memo. Modify content, preserve structure.
-
-```javascript
-const fs = require('fs');
-const {
-  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
-  AlignmentType, LevelFormat, HeadingLevel, BorderStyle, WidthType, ShadingType
-} = require('docx');
-
-const NAVY = "1A2B4A";
-const ORANGE = "E8541A";
-const GREY = "555555";
-const LIGHT_GREY = "888888";
-const BG_TINT = "F4F1EC";
-
-// --- Helper builders ---
-
-const p = (text, opts = {}) => new Paragraph({
-  spacing: { after: opts.after ?? 160, before: opts.before ?? 0, line: 320 },
-  alignment: opts.align ?? AlignmentType.LEFT,
-  children: [new TextRun({ text, font: "Calibri", size: opts.size ?? 22, color: opts.color ?? "333333", bold: opts.bold ?? false, italics: opts.italics ?? false })]
-});
-
-const runs = (parts, opts = {}) => new Paragraph({
-  spacing: { after: opts.after ?? 160, before: opts.before ?? 0, line: 320 },
-  alignment: opts.align ?? AlignmentType.LEFT,
-  children: parts.map(part => new TextRun({
-    text: part.text, font: "Calibri",
-    size: part.size ?? 22, color: part.color ?? "333333",
-    bold: part.bold ?? false, italics: part.italics ?? false
-  }))
-});
-
-const h1 = (text) => new Paragraph({
-  heading: HeadingLevel.HEADING_1,
-  spacing: { before: 360, after: 200 },
-  children: [new TextRun({ text, font: "Calibri", size: 40, bold: true, color: NAVY })]
-});
-
-const h2 = (text) => new Paragraph({
-  heading: HeadingLevel.HEADING_2,
-  spacing: { before: 320, after: 160 },
-  children: [new TextRun({ text, font: "Calibri", size: 30, bold: true, color: NAVY })]
-});
-
-const h3 = (text) => new Paragraph({
-  heading: HeadingLevel.HEADING_3,
-  spacing: { before: 240, after: 120 },
-  children: [new TextRun({ text, font: "Calibri", size: 24, bold: true, color: NAVY })]
-});
-
-const tag = (text, color) => new Paragraph({
-  spacing: { before: 120, after: 80 },
-  children: [new TextRun({ text, font: "Calibri", size: 18, bold: true, color, allCaps: true, characterSpacing: 30 })]
-});
-
-const bullet = (text) => new Paragraph({
-  numbering: { reference: "bullets", level: 0 },
-  spacing: { after: 100, line: 300 },
-  children: [new TextRun({ text, font: "Calibri", size: 22, color: "333333" })]
-});
-
-const bulletBold = (lead, rest) => new Paragraph({
-  numbering: { reference: "bullets", level: 0 },
-  spacing: { after: 100, line: 300 },
-  children: [
-    new TextRun({ text: lead, font: "Calibri", size: 22, color: NAVY, bold: true }),
-    new TextRun({ text: rest, font: "Calibri", size: 22, color: "333333" })
-  ]
-});
-
-const numbered = (text) => new Paragraph({
-  numbering: { reference: "numbers", level: 0 },
-  spacing: { after: 100, line: 300 },
-  children: [new TextRun({ text, font: "Calibri", size: 22, color: "333333" })]
-});
-
-const divider = () => new Paragraph({
-  spacing: { before: 240, after: 240 },
-  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: ORANGE, space: 1 } },
-  children: [new TextRun({ text: "" })]
-});
-
-const calloutBox = (label, body, accentColor = ORANGE) => new Table({
-  width: { size: 9360, type: WidthType.DXA },
-  columnWidths: [9360],
-  rows: [new TableRow({
-    children: [new TableCell({
-      width: { size: 9360, type: WidthType.DXA },
-      shading: { fill: BG_TINT, type: ShadingType.CLEAR },
-      margins: { top: 200, bottom: 200, left: 240, right: 240 },
-      borders: {
-        top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-        bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-        right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-        left: { style: BorderStyle.SINGLE, size: 24, color: accentColor }
-      },
-      children: [
-        new Paragraph({
-          spacing: { after: 80 },
-          children: [new TextRun({ text: label, font: "Calibri", size: 18, bold: true, color: accentColor, allCaps: true, characterSpacing: 30 })]
-        }),
-        new Paragraph({
-          spacing: { after: 0, line: 320 },
-          children: [new TextRun({ text: body, font: "Calibri", size: 22, color: NAVY })]
-        })
-      ]
-    })]
-  })]
-});
-
-const codeBox = (label, lines, accent) => {
-  const children = [
-    new Paragraph({
-      spacing: { after: 100 },
-      children: [new TextRun({ text: label, font: "Calibri", size: 18, bold: true, color: accent, allCaps: true, characterSpacing: 30 })]
-    }),
-    ...lines.map((l, i) => new Paragraph({
-      spacing: { after: i === lines.length - 1 ? 0 : 60, line: 280 },
-      children: [new TextRun({
-        text: l.text, font: "Calibri",
-        size: l.size ?? 22, color: l.color ?? "333333",
-        italics: l.italics ?? false, bold: l.bold ?? false
-      })]
-    }))
-  ];
-  return new Table({
-    width: { size: 9360, type: WidthType.DXA },
-    columnWidths: [9360],
-    rows: [new TableRow({
-      children: [new TableCell({
-        width: { size: 9360, type: WidthType.DXA },
-        shading: { fill: "FAFAF7", type: ShadingType.CLEAR },
-        margins: { top: 180, bottom: 180, left: 220, right: 220 },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-          bottom: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-          right: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-          left: { style: BorderStyle.SINGLE, size: 24, color: accent }
-        },
-        children
-      })]
-    })]
-  });
-};
-
-const quoteBox = (text) => new Table({
-  width: { size: 9360, type: WidthType.DXA },
-  columnWidths: [9360],
-  rows: [new TableRow({
-    children: [new TableCell({
-      width: { size: 9360, type: WidthType.DXA },
-      shading: { fill: "FAFAF7", type: ShadingType.CLEAR },
-      margins: { top: 180, bottom: 180, left: 280, right: 280 },
-      borders: {
-        top: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-        bottom: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-        right: { style: BorderStyle.SINGLE, size: 4, color: "E0DDD6" },
-        left: { style: BorderStyle.SINGLE, size: 24, color: ORANGE }
-      },
-      children: [new Paragraph({
-        spacing: { after: 0, line: 320 },
-        children: [new TextRun({ text, font: "Calibri", size: 24, color: NAVY, italics: true })]
-      })]
-    })]
-  })]
-});
-
-const coverBar = (brandName, tagline) => new Table({
-  width: { size: 9360, type: WidthType.DXA },
-  columnWidths: [9360],
-  rows: [new TableRow({
-    children: [new TableCell({
-      width: { size: 9360, type: WidthType.DXA },
-      shading: { fill: NAVY, type: ShadingType.CLEAR },
-      margins: { top: 360, bottom: 360, left: 320, right: 320 },
-      borders: {
-        top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-        bottom: { style: BorderStyle.SINGLE, size: 36, color: ORANGE },
-        right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-        left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
-      },
-      children: [
-        new Paragraph({
-          spacing: { after: 80 },
-          children: [new TextRun({ text: "OPPORTUNITIES MEMO", font: "Calibri", size: 20, bold: true, color: "F4F1EC", allCaps: true, characterSpacing: 60 })]
-        }),
-        new Paragraph({
-          spacing: { after: 60 },
-          children: [new TextRun({ text: brandName, font: "Calibri", size: 56, bold: true, color: "FFFFFF" })]
-        }),
-        new Paragraph({
-          spacing: { after: 0 },
-          children: [new TextRun({ text: tagline, font: "Calibri", size: 24, color: "F4F1EC", italics: true })]
-        })
-      ]
-    })]
-  })]
-});
-
-const metaLine = (clientName, dateStr) => {
-  const baseCell = (children) => new TableCell({
-    width: { size: 4680, type: WidthType.DXA },
-    margins: { top: 120, bottom: 120, left: 0, right: 0 },
-    borders: {
-      top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-      bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-      right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-      left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
-    },
-    children
-  });
-  return new Table({
-    width: { size: 9360, type: WidthType.DXA },
-    columnWidths: [4680, 4680],
-    rows: [new TableRow({
-      children: [
-        baseCell([new Paragraph({ children: [
-          new TextRun({ text: "PREPARED FOR  ", font: "Calibri", size: 16, bold: true, color: LIGHT_GREY, characterSpacing: 30 }),
-          new TextRun({ text: clientName, font: "Calibri", size: 20, color: NAVY, bold: true })
-        ] })]),
-        baseCell([new Paragraph({
-          alignment: AlignmentType.RIGHT,
-          children: [
-            new TextRun({ text: "FROM  ", font: "Calibri", size: 16, bold: true, color: LIGHT_GREY, characterSpacing: 30 }),
-            new TextRun({ text: `Jay Condie  ·  ${dateStr}`, font: "Calibri", size: 20, color: NAVY, bold: true })
-          ]
-        })])
-      ]
-    })]
-  });
-};
-
-// --- Document assembly ---
-
-const doc = new Document({
-  creator: "Jay Condie",
-  title: "[Brand] — Opportunities",
-  styles: {
-    default: { document: { run: { font: "Calibri", size: 22 } } }
-  },
-  numbering: {
-    config: [
-      {
-        reference: "bullets",
-        levels: [{
-          level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 360, hanging: 240 } }, run: { color: ORANGE } }
-        }]
-      },
-      {
-        reference: "numbers",
-        levels: [{
-          level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT,
-          style: { paragraph: { indent: { left: 360, hanging: 240 } }, run: { bold: true, color: NAVY } }
-        }]
-      }
-    ]
-  },
-  sections: [{
-    properties: {
-      page: {
-        size: { width: 12240, height: 15840 },
-        margin: { top: 1080, right: 1440, bottom: 1080, left: 1440 }
-      }
-    },
-    children: [
-      coverBar("[BRAND NAME]", "[one-line tagline]"),
-      p("", { after: 200 }),
-      metaLine("[Client Name]", "[Month Year]"),
-      p("", { after: 240 }),
-
-      // OPENING
-      runs([
-        { text: "[Client Name], ", bold: true, color: NAVY, size: 22 },
-        { text: "[opening paragraph: what you saw, what's working, where the gap is]" }
-      ], { after: 160 }),
-
-      // ... continue with the structure from Step 4 ...
-
-      // CLOSING
-      runs([{ text: "Talk soon,", color: NAVY }], { after: 60 }),
-      runs([{ text: "Jay", bold: true, color: NAVY, size: 24 }], { after: 0 })
-    ]
-  }]
-});
-
-Packer.toBuffer(doc).then(buf => {
-  fs.writeFileSync("/mnt/user-data/outputs/[brand-slug]-opportunities.docx", buf);
-  console.log("Built. Size:", buf.length, "bytes");
-});
-```
-
----
-
 ## Changelog
 
-- **v1.0** — Initial skill. Established beginner/intermediate mode split, 5-wins framework, DOCX design system, and opportunity-framed voice rules. Reference implementation: Downright Delicious memo (April 2026).
+- **v1.1** — Bound to the deliverable-system kit (`references/tokens.js` + `references/client-theme.js`). Removed bespoke NAVY/Calibri design system and 700-line reference build script. Cover, callouts, dividers, and tables now resolve through the kit's `coverStacked`, `finding`, `sectionRule`, `cardTable`. One source of truth for visual standards.
+- **v1.0** — Initial skill. Established beginner/intermediate mode split, 5-wins framework, DOCX design system, and opportunity-framed voice rules. Reference implementation: a past client memo (April 2026).
+- **v1.2** — KPI row and cover `preparedFor` retired from memos (Jay, Aug 2026, Client C). Both stay available in account audits. Build-script greeting line removed to match the existing no-greeting rule.

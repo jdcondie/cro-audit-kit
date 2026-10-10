@@ -4,11 +4,14 @@ Voice rules for every skill in the cro-audit kit: `cro-audit`, `cro-site-audit`,
 
 This voice is win-framed by default, direct, peer-to-peer. It acknowledges what's working before diagnosing gaps. It states the real cost of a problem without moralizing. It ends with a single decisive move, not three.
 
+It sits on top of the shared audit register (`references/audit-voice.md`) and shared guardrails (`references/guardrails.md`). Those are the cross-channel base (warm, plain, you/we, opportunity-framed, no fabrication). The rules below add CRO-specific calibration (beginner vs intermediate tone, the 5-second-test framing). On any conflict, the shared base wins for register; this file wins for CRO tone calibration.
+
 ---
 
 ## Universal Voice Rules
 
 - **Second-person direct address.** "You," "the buyer." Never "we recommend" or "the client should consider."
+- **Opportunities framing, not problems or fixes.** Every recommendation is framed as upside to capture, not a deficiency to correct. Banned labels in any client deliverable: "Problems," "Issues," "Fixes," "What's broken," "Mistakes." Use "Opportunities," "What to change," "Wins," "Where the upside is" instead. Point at the same lever from the gain side. This holds even for severity-triaged audits.
 - **Acknowledge what's working before diagnosing gaps.** Always. Even severity-triaged audits open with the bones that are sound.
 - **Name the single decisive move at the end.** One thing, not three.
 - **Never hedge.** "This works" or cut it.
@@ -43,7 +46,7 @@ Reads as AI slop and comes across abrasive. Join absences into one flowing sente
 Exception: sub-bullets inside a structured list, where each bullet is one absence on its own line. That's structural, not staccato prose.
 
 ### Calendar commitments
-"This week," "next week," "ship by Friday." Use difficulty tags (Easy / Medium / Hard) or sequencing tags (Ship Early / Ship After) instead. Calendar language creates implicit promises you can't control.
+"This week," "next week," "by Friday." Use sequencing framing (Do First / Do Next) instead; no Easy/Medium/Hard difficulty tags (dead in client deliverables, Jay Aug 2026), and "ship" is itself banned in deliverables. Calendar language creates implicit promises you can't control.
 
 ### Banned sentence structures
 
@@ -101,7 +104,9 @@ These are stance shifts on top of the universal rules. The voice doesn't change.
 | Framing a problem | "A lot of work to figure out what's for sale" | "The bundle is buried three clicks deep" | "Hero is product-led when the category needs outcome-led" |
 | Giving a fix | "What it could be: [exact copy]" | "Lead with the bundle positioned as the anchor offer" | "Reposition the bundle as the anchor SKU. Move BOGO to a separate test." |
 | Explaining why | "Food is a sensory category. Buyers can't taste online." | "Sensory-category shopping needs substitute signals." | "Substitute signal density is the lever." |
-| Closing | "Questions? Text me anytime. Happy to jump on a call..." | "Ready to talk through priorities whenever." | "Decisive move's at the top. Rest is sequencing." |
+| Closing | "Questions on any of it, shoot us a message. Happy to jump on a call..." | "Ready to talk through priorities whenever." | "Decisive move's at the top. Rest is sequencing." |
+
+Client-facing DOCX/PDF deliverables always close in the agency register ("shoot us a message," no personal sign-off) per `references/audit-voice.md` Branding and sign-off. The beginner/intermediate/advanced calibration adjusts warmth, not branding. "Text me" survives only in your personal cover email, which is a separate artifact.
 
 Beginner mode decodes acronyms inline on first use (Hero, Above the fold, CTA, PDP, CVR). Intermediate and advanced skip the decoding.
 
@@ -109,6 +114,7 @@ Beginner mode decodes acronyms inline on first use (Hero, Above the fold, CTA, P
 
 ## Structural Formatting
 
+- **Section headers name their subject in plain words.** See "Section headers" in `references/audit-voice.md`. That rule is canonical and this file does not override it. `Pricing`, `Mobile`, `Popups and offers`, `Proof and guarantee`, `What we'd recommend`. Never a metaphor ("Clear the doorway"), never a slogan ("The big idea"), never an insight sentence ("Your homepage is your best salesperson"). The insight goes in the section's first sentence, bolded.
 - **Bold key terms, problem labels, and takeaway phrases.** Sparingly. 1-2 key moments per section, not more.
 - **Italicize explanations, context lines, and secondary descriptions.**
 - **High bullet density.** One idea per bullet. No compound sentences hiding two fixes in one line.
@@ -129,7 +135,11 @@ Beginner mode decodes acronyms inline on first use (Hero, Above the fold, CTA, P
 
 ## Decisive Move (universal closing pattern)
 
-End every deliverable with one section that names the single variable that matters most. Examples:
+End every deliverable by naming the single variable that matters most.
+
+**This is a callout, not a section header.** Put it inside the closing recommendations section as a labelled box ("The biggest, simplest move" / "If you only do one thing"), the way the Meta audits do it. A section header reading "Decisive Move" tells a reader nothing about what's in it, which breaks the header rule above.
+
+Examples of the line itself:
 
 - "Decisive variable: hero clarity. Fix that before touching traffic."
 - "Decisive variable: the bundle is buried. Surface it as the anchor SKU before testing offers."

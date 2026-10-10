@@ -5,17 +5,19 @@ description: >
   conversion audit, site audit, or page teardown without specifying the
   deliverable format. Trigger on: "CRO audit," "conversion audit," "audit
   this site," "audit this page," "site teardown," "review this site." Asks
-  two intake questions to determine which downstream skill to run:
+  four intake questions to determine which downstream skill to run:
   cro-site-audit (polished PDF for cold leads + advanced operators),
   cro-opportunities-memo (DOCX win-framed for beginner/intermediate clients),
   or an inline markdown teardown (quick internal review, no client
   deliverable). If the user explicitly names the deliverable ("opportunities
   memo," "PDF audit"), route directly to that skill instead of running intake.
+  Carries trust and CTA checklists (references/page-checklists.md) and a
+  "what this audit can't tell you" footer for the markdown mode.
 ---
 
 # CRO Audit Router
 
-Front door for any CRO audit request. Two questions in, one of three deliverables out.
+Front door for any CRO audit request. Four questions in, one of three deliverables out. The intake matches the `/cro` command.
 
 ---
 
@@ -33,18 +35,18 @@ Otherwise, run intake.
 
 ---
 
-## Step 2 — Intake (ask both questions in one message)
+## Step 2 — Intake (ask all four questions in one message)
 
 Ask the user:
 
 1. **Client experience level** — beginner, intermediate, or advanced ecom operator?
 2. **Relationship context** — cold lead / first-impression deliverable, or existing client / follow-up?
+3. **Business model + primary goal + prior tests.** One combined question. Example answers to suggest: "DTC ecom, want to lift CVR on mobile, already shipped a new hero last month." "Local service, primary goal is more booked calls, no prior testing."
+4. **URL**, if it wasn't already given. A screenshot path works if the site is JS-heavy or login-gated.
 
-If the URL doesn't make it obvious, optionally add:
+If the URL doesn't make it obvious, you can also ask whether scope is homepage only or the full site.
 
-3. **Scope** — homepage diagnosis only, or full-site review?
-
-Wait for the answer before doing anything else. Do not fetch the URL yet.
+Wait for the answer before doing anything else. Do not fetch the URL yet. Pass the business model, goal, and prior tests to the downstream skill along with the route.
 
 ---
 
@@ -89,6 +91,8 @@ All voice rules live in `references/voice.md` (this skill's own references folde
 Use `web_fetch` on the provided URL. Apply the tier system above. Do not generate any Tier C finding from web_fetch alone.
 
 Evaluate against 7 dimensions: Hero clarity, Product/Service pages, Catalog/Coverage, Social proof, Email capture / lead form, Trust + guarantee, and **Mobile experience** (thumb reach, sticky CTA, mobile menu, scroll length, mobile fold trust).
+
+For the trust and CTA passes, work from the checklists in `references/page-checklists.md`.
 
 ### Verification Pass (mandatory before output)
 
@@ -246,7 +250,13 @@ Fill in the template below. Keep it tight — this is for internal use, not a cl
 
 ## **Decisive Move**
 
-[One sentence naming the single variable that matters most. Stop after this.]
+[One sentence naming the single variable that matters most.]
+
+---
+What this audit can't tell you:
+- Which fix will move revenue most. That needs an A/B test.
+- Whether this is your main bottleneck. That needs traffic and funnel data.
+- How your audience responds emotionally. That needs session recordings and user research.
 ```
 
 ### Verification Before Sending
@@ -256,6 +266,13 @@ Before printing the markdown in chat:
 - [ ] No finding claims inventory or stock state without browser confirmation
 - [ ] No finding references a specific promo code without browser confirmation
 - [ ] No finding describes popup behavior without browser confirmation
+- [ ] **Tier D:** every claim with a trigger, delay, sequence or frequency in it carries a measured number, not a screenshot (see `references/core.md`). Tool-call order is not a clock
+- [ ] **Tier D:** stateful widgets (Klaviyo, Privy, Justuno, A/B frameworks) were checked with suppression state cleared, and any self-suppressing widget is named as such in the deliverable so the client isn't confused when they can't reproduce it
+- [ ] Evidence-to-claim pass run: each finding's artifact matches the kind of assertion its sentence makes
+- [ ] **Tier E:** every claim about what a visitor sees on the first screen was judged from a screenshot, not a text extraction
+- [ ] **Tier E:** no negative claim (no / none / nothing / not a single) rests on a DOM or text read alone
+- [ ] **Tier E:** heroes that are video or full-bleed image were checked for copy baked into the media, and the finding says whether that copy is theme-editable or needs the file re-rendered
+- [ ] Fold claims name the viewport and were measured at a laptop and a large monitor
 - [ ] No finding describes dynamic upsell module contents without browser confirmation
 - [ ] Each finding has been internally classified Tier A, B, or C
 - [ ] Tier B findings have been spot-verified or flagged for verification
